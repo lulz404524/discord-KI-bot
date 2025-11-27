@@ -1,48 +1,152 @@
-# Discord + Ollama Dockerized Bot
+# Discord + Ollama Bot 🤖
 
-Kurzanleitung (Deutsch): Ein einfacher Discord-Bot, der Anfragen an eine lokale Ollama-Instanz weiterleitet.
+Ein interaktiver Discord-Bot mit verschiedenen KI-Persönlichkeiten, die Ollama lokal nutzen. Der Bot antwortet automatisch, wenn bestimmte Namen erwähnt werden.
 
-Dateien:
-- `bot.py` - Python-Discord-Bot mit Ollama-HTTP-Client
-- `Dockerfile` - baut das Bot-Image
-- `docker-compose.yml` - startet den Bot; optionaler Ollama-Block als Platzhalter
-- `.env.example` - Umgebungsvariablenbeispiel
+## Features
 
-Vorraussetzungen:
-- Docker und Docker Compose installiert
-- Ein laufender Ollama-Server auf dem Host (Standard `http://localhost:11434`) oder als Container
-- Ein Discord-Bot-Token (im Discord Developer Portal anlegen) und die Intent `MESSAGE CONTENT INTENT` aktivieren
+✨ **Persönlichkeitsgesteuert**: Der Bot ändert sein Verhalten je nachdem, welcher Name erwähnt wird
+- **Steffan** 😊 — Nett, hilfreich, gibt ausführliche Antworten
+- **Noha** 😤 — Nervig, gelangweilt, manchmal lustiga Antworten
+- **Sahra** 🤪 — Verwirrt, spricht vorbei am Thema, unhilfreich
 
-Schnellstart (PowerShell):
+🎮 **Slash-Commands**: Einfache Aktivierung/Deaktivierung des Chat-Modus
+- `/chat start` — aktiviert Chat im Channel
+- `/chat stop` — deaktiviert Chat
 
-1. Kopiere `.env.example` zu `.env` und fülle `DISCORD_TOKEN` aus.
+🐳 **Docker Support**: Bot und Ollama laufen als Container auf demselben Server
 
-```powershell
-cp .env.example .env
-# Öffne .env und setze DISCORD_TOKEN und ggf. OLLAMA_URL
+## Anforderungen
+
+- Docker & Docker Compose
+- Ein laufender Ollama-Server (lokal oder als Container)
+- Discord-Bot-Token (anlegen im [Discord Developer Portal](https://discord.com/developers))
+- Message Content Intent aktiviert (im Developer Portal)
+
+## Setup
+
+### 1. Repository klonen/herunterladen
+
+```bash
+git clone https://github.com/YOUR_USERNAME/discord-ollama-bot.git
+cd discord-ollama-bot
 ```
 
-2. Build & run mit Docker Compose:
+### 2. Umgebungsvariablen konfigurieren
 
-```powershell
+```bash
+cp .env.example .env
+```
+
+Öffne `.env` und setze:
+```
+DISCORD_TOKEN=your_bot_token_here
+OLLAMA_URL=http://ollama:11434
+OLLAMA_MODEL=llama2
+```
+
+### 3. Mit Docker Compose starten
+
+```bash
 docker-compose build
 docker-compose up -d
 ```
 
-3. In Discord: Nutze im Server den Befehl mit dem Präfix (Standard `!ask `):
+### 4. Logs überprüfen
 
-```text
-!ask Erzähle mir etwas über Python.
-```
-
-Hinweise & Anpassungen:
-- Wenn dein Ollama-Container anders heißt oder auf einem anderen Port läuft, passe `OLLAMA_URL` in `.env` an (z.B. `http://ollama:11434`).
-- Das Beispiel nutzt ein einfaches Präfix (`!ask `). Du kannst `bot.py` erweitern auf Slash-Commands oder Mentions.
-- Die Ollama-API-Pfade/Antwortstruktur können sich unterscheiden; wenn Antworten leer sind, prüfe die genaue API-Antwort und passe `query_ollama` in `bot.py` an.
-
-Probleme?
-- Schick mir die Fehlermeldung aus den Container-Logs und ich helfe beim Debuggen:
-
-```powershell
+```bash
 docker-compose logs -f bot
 ```
+
+## Verwendung in Discord
+
+1. **Chat-Modus aktivieren**:
+   ```
+   /chat start
+   ```
+
+2. **Mit Persönlichkeiten chatten**:
+   ```
+   Steffan, erkläre mir Python.
+   Noha, was ist eine API?
+   Sahra, wie funktioniert maschinelles Lernen?
+   ```
+
+3. **Chat-Modus deaktivieren**:
+   ```
+   /chat stop
+   ```
+
+## Konfiguration
+
+### Persönlichkeiten anpassen
+
+Öffne `bot.py` und bearbeite das `PERSONALITIES`-Dictionary:
+
+```python
+PERSONALITIES = {
+    "steffan": "Du bist Steffan, ...",
+    "noha": "Du bist Noha, ...",
+    "sahra": "Du bist Sahra, ...",
+}
+```
+
+### Neue Persönlichkeiten hinzufügen
+
+1. Füge einen neuen Eintrag zu `PERSONALITIES` in `bot.py` hinzu
+2. Der Name wird automatisch erkannt
+
+### Ollama konfigurieren
+
+Standard: `http://ollama:11434`
+
+Wenn Ollama auf der Host-Maschine läuft:
+```
+OLLAMA_URL=http://host.docker.internal:11434
+```
+
+## Dateistruktur
+
+```
+discord-ollama-bot/
+├── bot.py                 # Hauptbot-Code
+├── Dockerfile             # Docker-Image für Bot
+├── docker-compose.yml     # Docker-Komposition
+├── requirements.txt       # Python-Dependencies
+├── .env.example          # Beispiel-Umgebungsvariablen
+├── .gitignore            # Git-Ignores
+├── LICENSE               # MIT-Lizenz
+└── README.md             # Diese Datei
+```
+
+## Problembehebung
+
+### Bot antwortet nicht
+
+1. Überprüfe die Logs:
+   ```bash
+   docker-compose logs -f bot
+   ```
+
+2. Stelle sicher, dass `DISCORD_TOKEN` korrekt ist
+
+3. Prüfe Message Content Intent in Discord Developer Portal
+
+### Ollama Fehler
+
+1. Überprüfe, ob Ollama läuft:
+   ```bash
+   curl http://ollama:11434/api/tags
+   ```
+
+2. Überprüfe `OLLAMA_URL` in `.env`
+
+3. Passe ggf. das Modell in `OLLAMA_MODEL` an
+
+## Lizenz
+
+MIT License — siehe [LICENSE](LICENSE)
+
+## Support
+
+Für Fragen oder Probleme öffne ein Issue im Repository. 💬
+
