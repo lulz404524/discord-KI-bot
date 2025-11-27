@@ -1,25 +1,13 @@
 version: '3.8'
+
 services:
-  bot:
-    build: .
-    env_file: .env
+  discord-ki-bot:
+    image: discord-ki-bot:latest
+    container_name: discord-ki-bot
     restart: unless-stopped
-    networks:
-      - appnet
-
-  # Optional Ollama service placeholder. If you already run Ollama elsewhere on the host,
-  # remove or ignore this block and keep `OLLAMA_URL` pointing to the running service.
-  #ollama:
-  #  image: ollama/ollama:latest
-  #  ports:
-  #    - "11434:11434"
-  #  volumes:
-  #    - ollama-data:/var/lib/ollama
-  #  networks:
-  #    - appnet
-
-networks:
-  appnet:
-
-volumes:
-  ollama-data: {}
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - OLLAMA_URL=${OLLAMA_URL}
+      - OLLAMA_MODEL=${OLLAMA_MODEL}
+    env_file:
+      - .env

@@ -6,7 +6,7 @@ Ein interaktiver Discord-Bot mit verschiedenen KI-Persönlichkeiten, die Ollama 
 
 ✨ **Persönlichkeitsgesteuert**: Der Bot ändert sein Verhalten je nachdem, welcher Name erwähnt wird
 - **Steffan** 😊 — Nett, hilfreich, gibt ausführliche Antworten
-- **Noha** 😤 — Nervig, gelangweilt, manchmal lustiga Antworten
+- **Noha** 😤 — Nervig, gelangweilt, manchmal lustige Antworten
 - **Sahra** 🤪 — Verwirrt, spricht vorbei am Thema, unhilfreich
 
 🎮 **Slash-Commands**: Einfache Aktivierung/Deaktivierung des Chat-Modus

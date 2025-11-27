@@ -1,16 +1,19 @@
 import os
 import json
+import asyncio
 import aiohttp
 import discord
 from discord import Intents, app_commands
 from discord.ext import commands
 from dotenv import load_dotenv
-#dies ist ein test
+
 load_dotenv()
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://ollama:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama2")
+OLLAMA_TIMEOUT = int(os.getenv("OLLAMA_TIMEOUT", "600"))  # Timeout in Sekunden (Standard: 10 Minuten)
+OLLAMA_CONTEXT_SIZE = int(os.getenv("OLLAMA_CONTEXT_SIZE", "8192"))  # Context Window Größe
 
 intents = Intents.default()
 intents.message_content = True
@@ -62,14 +65,19 @@ async def query_ollama(prompt: str, system_prompt: str = "") -> str:
     payload = {
         "model": OLLAMA_MODEL,
         "prompt": full_prompt,
-        "stream": False
+        "stream": False,
+        "options": {
+            "num_ctx": OLLAMA_CONTEXT_SIZE,
+            "temperature": 0.7
+        }
     }
 
     url = OLLAMA_URL.rstrip('/') + "/api/generate"
 
-    async with aiohttp.ClientSession() as session:
+    timeout = aiohttp.ClientTimeout(total=OLLAMA_TIMEOUT)
+    async with aiohttp.ClientSession(timeout=timeout) as session:
         try:
-            async with session.post(url, json=payload, timeout=120) as resp:
+            async with session.post(url, json=payload) as resp:
                 text = await resp.text()
                 # Try parse JSON, otherwise return raw text
                 try:
@@ -122,7 +130,7 @@ async def chat_command(interaction: discord.Interaction, action: str):
     if action == "start":
         active_chat_channels[interaction.channel_id] = True
         await interaction.response.send_message(
-            "✅ Chat-Modus aktiviert! Ich werde antworten, wenn 'Steffan' oder 'Noha' erwähnt werden.",
+            "✅ Chat-Modus aktiviert! Ich werde antworten, wenn 'Steffan', 'Noha' oder 'Sahra' erwähnt werden.",
             ephemeral=False
         )
     elif action == "stop":

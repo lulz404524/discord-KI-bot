@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ssh user@server \"docker ps --format ''{{.Names}}\\t{{.Networks}}'' | grep ollama\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
